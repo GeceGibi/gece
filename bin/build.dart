@@ -44,7 +44,10 @@ class Build {
       final (version, number) = getVersion();
 
       await updateYaml(version, number);
-      await updatePList(version, number);
+
+      if (platform == Platform.ios) {
+        await updatePList(version, number);
+      }
 
       logVersion(version, number);
     } catch (e) {

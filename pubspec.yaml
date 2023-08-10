@@ -1,0 +1,21 @@
+name: gece
+description: A sample command-line application.
+version: 1.0.0+31231231
+# repository: https://github.com/my_org/my_repo
+# version: 3.1.0+3230811
+environment:
+  sdk: ^3.0.6
+
+# Add regular dependencies here.
+dependencies:
+  intl: ^0.18.1
+  args: ^2.4.2
+  path: ^1.8.3
+  yaml: ^3.1.2
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0
+
+executables:
+  scr: gece

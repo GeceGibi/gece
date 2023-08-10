@@ -1,21 +1,7 @@
 import 'dart:io';
 import 'package:args/args.dart';
-
-import 'printer.dart';
-
-class JobEntry {
-  const JobEntry({
-    required this.description,
-    required this.command,
-    required this.arguments,
-    this.pwd,
-  });
-
-  final String description;
-  final String command;
-  final String? pwd;
-  final String arguments;
-}
+import 'package:gece/printer.dart';
+import 'package:gece/runner.dart';
 
 Future<void> main(List<String> args) async {
   var parser = ArgParser()
@@ -30,15 +16,15 @@ Future<void> main(List<String> args) async {
   final haveIOS = Directory(iosDirectory).existsSync();
   final haveL10n = File('$pwd/l10n.yaml').existsSync();
 
-  final jobs = <JobEntry>[
+  final works = <Work>[
     if (result['clean'])
-      JobEntry(
+      Work(
         description: 'Clean Flutter Project',
         command: 'flutter',
         arguments: 'clean',
         pwd: pwd,
       ),
-    JobEntry(
+    Work(
       description: 'Remove Pub Lock Project',
       command: 'rm',
       arguments: '-rf pubspec.lock',
@@ -47,25 +33,25 @@ Future<void> main(List<String> args) async {
 
     ///! iOS
     if (haveIOS) ...[
-      JobEntry(
+      Work(
         description: 'Pod deintegrate',
         command: 'pod',
         arguments: 'deintegrate',
         pwd: iosDirectory,
       ),
-      JobEntry(
+      Work(
         description: 'Remove Pod File',
         command: 'rm',
         arguments: '-rf Pods',
         pwd: iosDirectory,
       ),
-      JobEntry(
+      Work(
         description: 'Remove Cached iOS Flutter Libs',
         command: 'rm',
         arguments: '-rf .symlinks',
         pwd: iosDirectory,
       ),
-      JobEntry(
+      Work(
         description: 'Remove Podfile.lock',
         command: 'rm',
         arguments: '-rf Podfile.lock',
@@ -74,7 +60,7 @@ Future<void> main(List<String> args) async {
     ],
 
     ///! Home
-    JobEntry(
+    Work(
       description: 'Get flutter packages',
       command: 'flutter',
       arguments: 'pub get',
@@ -83,7 +69,7 @@ Future<void> main(List<String> args) async {
 
     ///! iOS
     if (haveIOS)
-      JobEntry(
+      Work(
         description: 'Pod install & update',
         command: 'pod',
         arguments: 'install --repo-update',
@@ -92,13 +78,13 @@ Future<void> main(List<String> args) async {
 
     ///! Home
     if (haveL10n)
-      JobEntry(
+      Work(
         description: 'Generate L10N',
         command: 'flutter',
         arguments: 'gen-l10n',
         pwd: pwd,
       ),
-    JobEntry(
+    Work(
       description: 'Generate Freezed Models',
       command: 'dart',
       pwd: pwd,
@@ -111,29 +97,8 @@ Future<void> main(List<String> args) async {
   Printer.yellow.log('\n$ext re-install started $ext\n');
   Printer.cyan.log('pwd: $pwd\n');
 
-  for (final job in jobs) {
-    Printer.blue.log('┌⏺ ${job.description}');
-    Printer.green.log('├❯ ${job.command} ${job.arguments}');
-
-    final process = await Process.run(
-      job.command,
-      job.arguments.split(' '),
-      workingDirectory: job.pwd,
-    );
-
-    if (result['verbose']) {
-      final out = (process.stdout as String).trim();
-      if (out.isNotEmpty) {
-        Printer.white.log(out.split('\n').map((line) => '├❯ $line').join('\n'));
-      }
-    }
-
-    if (process.exitCode != 0) {
-      Printer.red.log('└❯ exit(${process.exitCode}): ${process.stderr}');
-    } else {
-      Printer.green.log('└❯ exit(${process.exitCode})');
-    }
-
+  for (final work in works) {
+    await Runner.run(work, verbose: result['verbose']);
     print('\n');
   }
 

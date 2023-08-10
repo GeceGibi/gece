@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:gece/printer.dart';
+import 'package:gece/runner.dart';
 import 'package:intl/intl.dart';
 import 'package:yaml/yaml.dart';
 
-import 'printer.dart';
 // ignore_for_file: avoid_print
 
 enum Platform { google, huawei, ios }
@@ -177,30 +178,33 @@ void main(List<String> args) async {
     final packageType = Platform.ios == build.platform ? 'ipa' : 'appbundle';
 
     if (arguments['clean-build']) {
-      final process = await Process.run('flutter', ['clean']);
-
-      if (arguments['verbose']) {
-        Printer.white.log(process.stderr ?? process.stdout);
-      }
+      await Runner.run(
+        Work(
+          command: 'flutter',
+          arguments: 'clean',
+          description: 'Clean Flutter Project',
+        ),
+        verbose: arguments['verbose'],
+      );
     }
 
-    Printer.green.log('Flutter build started !');
-    final process = await Process.run('flutter', [
-      'build',
-      packageType,
-      '--release',
-      '--obfuscate',
-      '--split-debug-info=build/${build.platform.name}/symbols'
-    ]);
+    print(' ');
+    Printer.yellow.log('Flutter build started !');
+    print(' ');
 
-    if (process.exitCode != 0) {
-      Printer.red.log(process.stderr);
-    } else {
+    final exitCode = await Runner.run(
+      Work(
+        command: 'flutter',
+        arguments:
+            'build $packageType --release --obfuscate --split-debug-info=build/${build.platform.name}/symbols',
+        description: 'Clean Flutter Project',
+      ),
+      verbose: arguments['verbose'],
+    );
+
+    if (exitCode == 0) {
+      print(' ');
       Printer.green.log('Build Done !');
-
-      if (arguments['verbose']) {
-        Printer.white.log(process.stdout);
-      }
     }
   }
 }

@@ -192,9 +192,8 @@ void main(List<String> args) async {
         ),
         verbose: arguments['verbose'],
       );
+      print(' ');
     }
-
-    print(' ');
 
     final exitCode = await Runner.run(
       Work(

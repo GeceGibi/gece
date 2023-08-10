@@ -98,7 +98,7 @@ class Build {
       return line;
     });
 
-    await pubspec.writeAsString(file.join('\n'));
+    await pubspec.writeAsString(file.join('\n').trim());
   }
 
   Future<void> updatePList(String version, int build) async {
@@ -118,7 +118,7 @@ class Build {
       }
     }
 
-    await plist.writeAsString(lines.join('\n'));
+    await plist.writeAsString(lines.join('\n').trim());
   }
 
   void logVersion(String version, int build) {

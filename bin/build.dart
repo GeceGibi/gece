@@ -149,8 +149,8 @@ void main(List<String> args) async {
     ///
     ..addFlag('build', abbr: 'b', defaultsTo: false)
     ..addFlag('verbose', abbr: 'v', defaultsTo: false)
-    ..addFlag('obfuscate', abbr: 'o', defaultsTo: true)
-    ..addFlag('clean-build', abbr: 'c', defaultsTo: true)
+    ..addFlag('obfuscate', abbr: 'o', defaultsTo: false)
+    ..addFlag('clean-build', abbr: 'c', defaultsTo: false)
 
     ///
     ..addOption('major', abbr: 'm')

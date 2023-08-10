@@ -180,6 +180,9 @@ void main(List<String> args) async {
   if (await build() && arguments['build']) {
     final packageType = Platform.ios == build.platform ? 'ipa' : 'appbundle';
 
+    Printer.yellow.log('$packageType build started !');
+    print(' ');
+
     if (arguments['clean-build']) {
       await Runner.run(
         Work(
@@ -191,8 +194,6 @@ void main(List<String> args) async {
       );
     }
 
-    print(' ');
-    Printer.yellow.log('Flutter build started !');
     print(' ');
 
     final exitCode = await Runner.run(

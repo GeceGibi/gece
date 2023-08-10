@@ -195,11 +195,14 @@ void main(List<String> args) async {
       print(' ');
     }
 
+    final obfuscateCommand = arguments['obfuscate']
+        ? '--obfuscate --split-debug-info=build/${build.platform.name}/symbols'
+        : '';
+
     final exitCode = await Runner.run(
       Work(
         command: 'flutter',
-        arguments:
-            'build $packageType --release --obfuscate --split-debug-info=build/${build.platform.name}/symbols',
+        arguments: 'build $packageType --release $obfuscateCommand',
         description: 'Building for ${build.platform.name.toUpperCase()}',
       ),
       verbose: arguments['verbose'],

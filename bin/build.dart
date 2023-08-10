@@ -77,8 +77,10 @@ class Build {
       return (version, number!);
     }
 
-    final formatBase = platform == Platform.ios ? 'yyMMDD' : 'yyMMDDHH';
-    final format = '${(major ?? '')}$formatBase';
+    var defaultMajor = version.split('.').first;
+
+    final formatBase = platform == Platform.ios ? 'yyMMd' : 'yyMMddHH';
+    final format = '${(major ?? defaultMajor)}$formatBase';
 
     return (version, int.parse(DateFormat(format).format(DateTime.now())));
   }
@@ -142,13 +144,14 @@ void main(List<String> args) async {
 
     ///
     ..addFlag('build', abbr: 'b', defaultsTo: false)
+    ..addFlag('verbose', abbr: 'v', defaultsTo: false)
     ..addFlag('obfuscate', abbr: 'o', defaultsTo: true)
     ..addFlag('clean-build', abbr: 'c', defaultsTo: true)
 
     ///
     ..addOption('major', abbr: 'm')
     ..addOption('number', abbr: 'n')
-    ..addOption('version')
+    ..addOption('version', abbr: 'w')
     ..addOption('platform', abbr: 'p', allowed: ['google', 'huawei', 'ios']);
 
   final arguments = parser.parse(args);
@@ -174,9 +177,14 @@ void main(List<String> args) async {
     final packageType = Platform.ios == build.platform ? 'ipa' : 'appbundle';
 
     if (arguments['clean-build']) {
-      await Process.run('flutter', ['clean']);
+      final process = await Process.run('flutter', ['clean']);
+
+      if (arguments['verbose']) {
+        Printer.white.log(process.stderr ?? process.stdout);
+      }
     }
 
+    Printer.green.log('Flutter build started !');
     final process = await Process.run('flutter', [
       'build',
       packageType,
@@ -186,9 +194,13 @@ void main(List<String> args) async {
     ]);
 
     if (process.exitCode != 0) {
-      print(process.stderr);
+      Printer.red.log(process.stderr);
     } else {
-      print(process.stdout);
+      Printer.green.log('Build Done !');
+
+      if (arguments['verbose']) {
+        Printer.white.log(process.stdout);
+      }
     }
   }
 }

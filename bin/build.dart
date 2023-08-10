@@ -197,7 +197,7 @@ void main(List<String> args) async {
         command: 'flutter',
         arguments:
             'build $packageType --release --obfuscate --split-debug-info=build/${build.platform.name}/symbols',
-        description: 'Clean Flutter Project',
+        description: 'Building for ${build.platform.name.toUpperCase()}',
       ),
       verbose: arguments['verbose'],
     );

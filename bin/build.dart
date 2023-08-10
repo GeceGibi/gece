@@ -138,18 +138,17 @@ class Build {
 }
 
 void main(List<String> args) async {
-  final parser = ArgParser();
+  final parser = ArgParser()
 
-  parser
-
-    //
+    ///
     ..addFlag('build', abbr: 'b', defaultsTo: false)
     ..addFlag('obfuscate', abbr: 'o', defaultsTo: true)
+    ..addFlag('clean-build', abbr: 'c', defaultsTo: true)
 
-    //
+    ///
     ..addOption('major', abbr: 'm')
     ..addOption('number', abbr: 'n')
-    ..addOption('version', abbr: 'v')
+    ..addOption('version')
     ..addOption('platform', abbr: 'p', allowed: ['google', 'huawei', 'ios']);
 
   final arguments = parser.parse(args);
@@ -174,12 +173,16 @@ void main(List<String> args) async {
   if (await build() && arguments['build']) {
     final packageType = Platform.ios == build.platform ? 'ipa' : 'appbundle';
 
+    if (arguments['clean-build']) {
+      await Process.run('flutter', ['clean']);
+    }
+
     final process = await Process.run('flutter', [
       'build',
       packageType,
       '--release',
       '--obfuscate',
-      '--split-debug-info=build/${build.platform}/symbols'
+      '--split-debug-info=build/${build.platform.name}/symbols'
     ]);
 
     if (process.exitCode != 0) {

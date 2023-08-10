@@ -18,12 +18,11 @@ class JobEntry {
 }
 
 Future<void> main(List<String> args) async {
-  var parser = ArgParser();
-
-  parser.addOption('clean', abbr: 'c', defaultsTo: 'true');
+  var parser = ArgParser()
+    ..addFlag('clean', abbr: 'c', defaultsTo: true)
+    ..addFlag('verbose', abbr: 'v', defaultsTo: false);
 
   final result = parser.parse(args);
-  final flutterClean = result['clean'] == 'true';
 
   final pwd = Directory.current.path;
 
@@ -32,7 +31,7 @@ Future<void> main(List<String> args) async {
   final haveL10n = File('$pwd/l10n.yaml').existsSync();
 
   final jobs = <JobEntry>[
-    if (flutterClean)
+    if (result['clean'])
       JobEntry(
         description: 'Clean Flutter Project',
         command: 'flutter',
@@ -122,7 +121,7 @@ Future<void> main(List<String> args) async {
       workingDirectory: job.pwd,
     );
 
-    if (args.contains('--verbose')) {
+    if (result['verbose']) {
       final out = (process.stdout as String).trim();
       if (out.isNotEmpty) {
         Printer.white.log(out.split('\n').map((line) => '├❯ $line').join('\n'));

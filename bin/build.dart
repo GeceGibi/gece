@@ -187,7 +187,7 @@ void main(List<String> args) async {
       await Runner.run(
         Work(
           command: 'flutter',
-          arguments: 'clean',
+          arguments: ['clean'],
           description: 'Clean Flutter Project',
         ),
         verbose: arguments['verbose'],
@@ -195,14 +195,18 @@ void main(List<String> args) async {
       print(' ');
     }
 
-    final obfuscateCommand = arguments['obfuscate']
-        ? '--obfuscate --split-debug-info=build/${build.platform.name}/symbols'
-        : '';
-
     final exitCode = await Runner.run(
       Work(
         command: 'flutter',
-        arguments: 'build $packageType --release $obfuscateCommand',
+        arguments: [
+          'build',
+          packageType,
+          '--release',
+          if (arguments['obfuscate']) ...[
+            '--obfuscate',
+            '--split-debug-info=build/${build.platform.name}/symbols'
+          ]
+        ],
         description: 'Building for ${build.platform.name.toUpperCase()}',
       ),
       verbose: arguments['verbose'],

@@ -21,13 +21,13 @@ Future<void> main(List<String> args) async {
       Work(
         description: 'Clean Flutter Project',
         command: 'flutter',
-        arguments: 'clean',
+        arguments: ['clean'],
         pwd: pwd,
       ),
     Work(
       description: 'Remove Pub Lock Project',
       command: 'rm',
-      arguments: '-rf pubspec.lock',
+      arguments: ['-rf', 'pubspec.lock'],
       pwd: pwd,
     ),
 
@@ -36,25 +36,25 @@ Future<void> main(List<String> args) async {
       Work(
         description: 'Pod deintegrate',
         command: 'pod',
-        arguments: 'deintegrate',
+        arguments: ['deintegrate'],
         pwd: iosDirectory,
       ),
       Work(
         description: 'Remove Pod File',
         command: 'rm',
-        arguments: '-rf Pods',
+        arguments: ['-rf', 'Pods'],
         pwd: iosDirectory,
       ),
       Work(
         description: 'Remove Cached iOS Flutter Libs',
         command: 'rm',
-        arguments: '-rf .symlinks',
+        arguments: ['-rf', '.symlinks'],
         pwd: iosDirectory,
       ),
       Work(
         description: 'Remove Podfile.lock',
         command: 'rm',
-        arguments: '-rf Podfile.lock',
+        arguments: ['-rf', 'Podfile.lock'],
         pwd: iosDirectory,
       ),
     ],
@@ -63,7 +63,7 @@ Future<void> main(List<String> args) async {
     Work(
       description: 'Get flutter packages',
       command: 'flutter',
-      arguments: 'pub get',
+      arguments: ['pub', 'get'],
       pwd: pwd,
     ),
 
@@ -72,7 +72,7 @@ Future<void> main(List<String> args) async {
       Work(
         description: 'Pod install & update',
         command: 'pod',
-        arguments: 'install --repo-update',
+        arguments: ['install', '--repo-update'],
         pwd: iosDirectory,
       ),
 
@@ -81,14 +81,19 @@ Future<void> main(List<String> args) async {
       Work(
         description: 'Generate L10N',
         command: 'flutter',
-        arguments: 'gen-l10n',
+        arguments: ['gen-l10n'],
         pwd: pwd,
       ),
     Work(
       description: 'Generate Freezed Models',
       command: 'dart',
       pwd: pwd,
-      arguments: 'run build_runner build --delete-conflicting-outputs',
+      arguments: [
+        'run',
+        'build_runner',
+        'build',
+        '--delete-conflicting-outputs'
+      ],
     ),
   ];
 

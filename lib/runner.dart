@@ -13,17 +13,17 @@ class Work {
   final String description;
   final String command;
   final String? pwd;
-  final String arguments;
+  final List<String> arguments;
 }
 
 class Runner {
   static Future<int> run(Work work, {bool verbose = false}) async {
     Printer.blue.log('┌⏺ ${work.description}');
-    Printer.green.log('├❯ ${work.command} ${work.arguments}');
+    Printer.green.log('├❯ ${work.command} ${work.arguments.join(" ")}');
 
     final process = await Process.run(
       work.command,
-      work.arguments.split(' '),
+      work.arguments,
       workingDirectory: work.pwd,
     );
 

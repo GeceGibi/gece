@@ -154,6 +154,7 @@ void main(List<String> args) async {
 
     ///
     ..addOption('major', abbr: 'm')
+    ..addOption('flavor', abbr: 'f')
     ..addOption('number', abbr: 'n')
     ..addOption('version', abbr: 'w')
     ..addOption('platform', abbr: 'p', allowed: ['google', 'huawei', 'ios']);
@@ -195,22 +196,26 @@ void main(List<String> args) async {
       print(' ');
     }
 
-    final exitCode = await Runner.run(
-      Work(
-        command: 'flutter',
-        arguments: [
-          'build',
-          packageType,
-          '--release',
-          if (arguments['obfuscate']) ...[
-            '--obfuscate',
-            '--split-debug-info=build/${build.platform.name}/symbols'
-          ]
+    final work = Work(
+      command: 'flutter',
+      arguments: [
+        'build',
+        packageType,
+        '--release',
+
+        // Obfuscation
+        if (arguments['obfuscate']) ...[
+          '--obfuscate',
+          '--split-debug-info=build/${build.platform.name}/symbols'
         ],
-        description: 'Building for ${build.platform.name.toUpperCase()}',
-      ),
-      verbose: arguments['verbose'],
+
+        // Flavor
+        if (arguments['flavor'] != null) ...['--flavor', arguments['flavor']]
+      ],
+      description: 'Building for ${build.platform.name.toUpperCase()}',
     );
+
+    final exitCode = await Runner.run(work, verbose: arguments['verbose']);
 
     if (exitCode == 0) {
       print(' ');
